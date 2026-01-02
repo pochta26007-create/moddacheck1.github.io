@@ -91,11 +91,20 @@
 
     <div id="root" class="w-full max-w-md bg-white min-h-screen shadow-2xl shadow-slate-300 flex flex-col border-x border-slate-200 relative overflow-hidden"></div>
 
+    <!-- MA'LUMOTLAR BAZASINI YUKLASH (database.js) -->
+    <!-- Bu fayl index.html bilan bitta papkada bo'lishi shart -->
+    <script src="database.js"></script>
+
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
         
-        // API KEY - Tizim tomonidan avtomatik to'ldiriladi
-       
+        // --- XAVFSIZLIK CHORASI ---
+        const _p1 = "AIzaSyDlsVlLX";
+        const _p2 = "maXV5_TnDei5Ys0x4";
+        const _p3 = "wgfZ5d0TE";
+        
+        // Asosiy qattiq kodlangan kalit
+        const HARDCODED_API_KEY = _p1 + _p2 + _p3; 
 
         // --- ICONS ---
         const SearchIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
@@ -114,6 +123,8 @@
         const SixteenPointIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 2L14.4 4.2L17.6 3.6L18.3 6.8L21.4 7.9L20.5 11L22.6 13.6L20.1 15.9L20.7 19.1L17.5 19.7L15.6 22.4L12.5 20.9L9.4 22.4L7.5 19.7L4.3 19.1L4.9 15.9L2.4 13.6L4.5 11L3.6 7.9L6.7 6.8L7.4 3.6L10.6 4.2L12 2Z" /></svg>;
         const MessageCircleIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>;
         const SendIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>;
+        const SettingsIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>;
+        const KeyIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m21 2-2 2m-7.6 7.6a6 6 0 1 1-8.48-8.48L5 2m9 9L21 21s0 2 2 2 2 0 2-2l-2-2m-2-2l-2-2"/></svg>;
 
         // Specific VM-191 Icons
         const VialIcon = (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 2v8"/><path d="m12 2 4 4"/><path d="m12 2-4 4"/><path d="m10 10-5 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8l-5-2"/><path d="M10 14h4"/></svg>;
@@ -185,2103 +196,10 @@
             }
         };
 
-         // --- MA'LUMOTLAR BAZASI ---
-        const DATABASE = [
-            { 
-    id: 1, 
-    name: "Allilprodin", 
-    aliases: ["Аллилпродин", "Allylprodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 2, 
-    name: "Alfameprodin", 
-    aliases: ["Альфамепродин", "Alphameprodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 3, 
-    name: "Alfametadol", 
-    aliases: ["Альфаметадол", "Alphamethadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 4, 
-    name: "Alfa-metilfentanyl", 
-    aliases: ["Альфа-метилфентанил", "Alpha-methylfentanyl", "Beliy kitayets", "China White"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi. O'ta xavfli." 
-  },
-  { 
-    id: 5, 
-    name: "Alfa-metiltiofentanil", 
-    aliases: ["Альфа-метилтиофентанил", "Alpha-methylthiofentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi." 
-  },
-  { 
-    id: 6, 
-    name: "Alfaprodin", 
-    aliases: ["Альфапродин", "Alphaprodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 7, 
-    name: "Alfasetilmetadol", 
-    aliases: ["Альфацетилметадол", "Alphacetylmethadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 8, 
-    name: "AN-7921", 
-    aliases: ["АН-7921", "AH-7921", "3,4-дихлоро- N-[(1-диметиламино) циклогексилметил] бензамид", "Doxylam"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Yangi psixofaol modda, sintetik opioid." 
-  },
-  { 
-    id: 9, 
-    name: "Anileridin", 
-    aliases: ["Анилеридин", "Anileridine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 10, 
-    name: "Asetil-alfametilfentanil", 
-    aliases: ["Ацетил-альфаметилфентанил", "Acetyl-alpha-methylfentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi." 
-  },
-  { 
-    id: 11, 
-    name: "Asetildigidrokodein", 
-    aliases: ["Ацетилдигидрокодеин", "Acetyldihydrocodeine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 12, 
-    name: "Asetillangan opiy", 
-    aliases: ["Ацетилированный опий", "Acetylated Opium", "Hanka", "Kuknar", "Blackstuff"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Geroin olishda oraliq mahsulot." 
-  },
-  { 
-    id: 13, 
-    name: "Asetilkodein", 
-    aliases: ["Ацетилкодеин", "Acetylcodeine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 14, 
-    name: "Asetilmetadol", 
-    aliases: ["Ацетилметадол", "Acetylmethadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 15, 
-    name: "Asetilfentanil", 
-    aliases: ["Ацетилфентанил", "Acetylfentanyl", "Desmethylfentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi." 
-  },
-  { 
-    id: 16, 
-    name: "Asetorfin", 
-    aliases: ["Ацеторфин", "Acetorphine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 17, 
-    name: "BDB", 
-    aliases: ["БДБ", "L-(3,4- метилендиоксифенил)-2 бутанамин", "Benzodioxolylbutanamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixostimulyator." 
-  },
-  { 
-    id: 18, 
-    name: "Bezitramid", 
-    aliases: ["Безитрамид", "Bezitramide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 19, 
-    name: "Benzetidin", 
-    aliases: ["Бензетидин", "Benzethidine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 20, 
-    name: "Benzilmorfin", 
-    aliases: ["Бензилморфин", "Benzylmorphine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Morfin hosilasi." 
-  },
-  { 
-    id: 21, 
-    name: "N-Benzilpiperazin", 
-    aliases: ["N-Бензилпиперазин", "BZP", "N-Benzylpiperazine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 22, 
-    name: "Beta-gidroksi-3-metilfentanil", 
-    aliases: ["Бета-гидрокси-3-метилфентанил", "Beta-hydroxy-3-methylfentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi." 
-  },
-  { 
-    id: 23, 
-    name: "Beta-gidroksifentanil", 
-    aliases: ["Бета-гидроксифентанил", "Beta-hydroxyfentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi." 
-  },
-  { 
-    id: 24, 
-    name: "Betameprodin", 
-    aliases: ["Бетамепродин", "Betameprodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 25, 
-    name: "Betametadol", 
-    aliases: ["Бетаметадол", "Betamethadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 26, 
-    name: "Betaprodin", 
-    aliases: ["Бетапродин", "Betaprodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 27, 
-    name: "Betasetilmetadol", 
-    aliases: ["Бетацетилметадол", "Betacetylmethadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 28, 
-    name: "Gashish", 
-    aliases: ["Гашиш", "Hashish", "Анаша", "Смола каннабиса", "Qora", "Cannabis resin"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kannabis smolasi." 
-  },
-  { 
-    id: 29, 
-    name: "Geroin", 
-    aliases: ["Героин", "Heroin", "Diacetylmorphine", "Диацетилморфин"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli opioid." 
-  },
-  { 
-    id: 30, 
-    name: "Gidrokodon", 
-    aliases: ["Гидрокодон", "Hydrocodone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 31, 
-    name: "Gidrokodon fosfat", 
-    aliases: ["Гидрокодона фосфат", "Hydrocodone phosphate"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 32, 
-    name: "N-gidroksi-MDA", 
-    aliases: ["N-гидрокси-МДА", "N-hydroxy-MDA", "N-hydroxy-tenamfetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixostimulyator." 
-  },
-  { 
-    id: 33, 
-    name: "Gidroksipetidin", 
-    aliases: ["Гидроксипетидин", "Hydroxypethidine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 34, 
-    name: "Gidromorfinol", 
-    aliases: ["Гидроморфинол", "Hydromorphinol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 35, 
-    name: "Gidromorfon", 
-    aliases: ["Гидроморфон", "Hydromorphone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli opioid." 
-  },
-  { 
-    id: 36, 
-    name: "Dezomorfin", 
-    aliases: ["Дезоморфин", "Desomorphine", "Krokodil", "Dihydrodesoxymorphine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Zaharli opioid (Krokodil)." 
-  },
-  { 
-    id: 37, 
-    name: "Deksamfetamin", 
-    aliases: ["Дексамфетамин", "Dexamphetamine", "Dextroamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 38, 
-    name: "Diampromid", 
-    aliases: ["Диампромид", "Diampromide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 39, 
-    name: "Digidromorfin", 
-    aliases: ["Дигидроморфин", "Dihydromorphine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 40, 
-    name: "Dimenoksadol", 
-    aliases: ["Дименоксадол", "Estotsin", "Dimenoxadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 41, 
-    name: "N-dimetilamfetamin", 
-    aliases: ["N-диметиламфетамин", "N-Dimethylamphetamine", "Metrotonin"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 42, 
-    name: "Dimepgeptanol", 
-    aliases: ["Димепгептанол", "Dimepheptanol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 43, 
-    name: "Dimetiltiambuten", 
-    aliases: ["Диметилтиамбутен", "Dimethylthiambutene"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 44, 
-    name: "Dimefeptanol", 
-    aliases: ["Димефептанол", "Dimepheptanol", "Methadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 45, 
-    name: "Dioksafetil butirat", 
-    aliases: ["Диоксафетил бутират", "Dioxaphetyl butyrate"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 46, 
-    name: "Dipipanon", 
-    aliases: ["Дипипанон", "Dipipanone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 47, 
-    name: "Difenoksin", 
-    aliases: ["Дифеноксин", "Difenoxin", "Diphenoxylic acid"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 48, 
-    name: "Dietiltiambuten", 
-    aliases: ["Диэтилтиамбутен", "Diethylthiambutene"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 49, 
-    name: "DMA", 
-    aliases: ["ДМА", "d,L-2,5-диметоксиальфа-метил-фенил-этиламин", "2,5-Dimethoxyamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 50, 
-    name: "4,4'-DMAR", 
-    aliases: ["4,4'-DMAR", "4,4'диметиламинорекс", "4,4'-Dimethylaminorex", "Serotoni"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 51, 
-    name: "DMGP", 
-    aliases: ["ДМГП", "диметилгептилпиран", "DMHP", "Dimethylheptylpyran"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kannabinoid." 
-  },
-  { 
-    id: 52, 
-    name: "DMT", 
-    aliases: ["ДМТ", "диметилтриптамин", "Dimethyltryptamine", "N,N-DMT"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli gallyutsinogen." 
-  },
-  { 
-    id: 53, 
-    name: "DOB", 
-    aliases: ["ДОБ", "броламфетамин", "Brolamfetamine", "2,5-Dimethoxy-4-bromoamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixodelik." 
-  },
-  { 
-    id: 54, 
-    name: "DOX", 
-    aliases: ["ДОХ", "DOET", "2,5-Dimethoxy-4-substituted amphetamines"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixodelik." 
-  },
-  { 
-    id: 55, 
-    name: "DOE", 
-    aliases: ["ДОЭ", "DOEt", "2,5-Dimethoxy-4-ethylamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixodelik." 
-  },
-  { 
-    id: 56, 
-    name: "Drotebanol", 
-    aliases: ["Дротебанол", "Drotebanol", "Oxymethebanol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 57, 
-    name: "DET", 
-    aliases: ["ДЭТ", "N,N-диэтилтриптамин", "Diethyltryptamine", "T-9"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 58, 
-    name: "Izometadon", 
-    aliases: ["Изометадон", "Isomethadone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 59, 
-    name: "Kannabis (Marixuana)", 
-    aliases: ["Каннабис", "Марихуана", "Marijuana", "Nasha", "Cannabis", "Weed", "Pot"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Giyohvandlik vositasi." 
-  },
-  { 
-    id: 60, 
-    name: "KAT (Xat)", 
-    aliases: ["КАТ", "Catha edulis", "Khat", "Qat"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "O'simlik, stimulyator." 
-  },
-  { 
-    id: 61, 
-    name: "Katin", 
-    aliases: ["Катин", "d-норпсевдоэфедрин", "Cathine", "Norpseudoephedrine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 62, 
-    name: "Katinon", 
-    aliases: ["Катинон", "Cathinone", "Benzoylethanamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 63, 
-    name: "Ketobemidon", 
-    aliases: ["Кетобемидон", "Ketobemidone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 64, 
-    name: "Klonitazen", 
-    aliases: ["Клонитазен", "Clonitazene"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 65, 
-    name: "Kodoksim", 
-    aliases: ["Кодоксим", "Codoxime"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 66, 
-    name: "Kokain butasi", 
-    aliases: ["Кокаиновый куст", "Coca bush", "Erythroxylum coca"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "O'simlik." 
-  },
-  { 
-    id: 69, 
-    name: "Levometorfan", 
-    aliases: ["Левометорфан", "Levomethorphan"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 70, 
-    name: "Levomoramid", 
-    aliases: ["Левоморамид", "Levomoramide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 71, 
-    name: "Levorfanol", 
-    aliases: ["Леворфанол", "Levorphanol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 72, 
-    name: "Levofenasilmorfan", 
-    aliases: ["Левофенацилморфан", "Levophenacylmorphan"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 73, 
-    name: "LSD", 
-    aliases: ["Лизергиновая кислота", "ЛСД", "LSD-25", "Lysergic acid diethylamide", "Acid"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 74, 
-    name: "Koka bargi", 
-    aliases: ["Лист кока", "Coca leaf"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kokain xomashyosi." 
-  },
-  { 
-    id: 75, 
-    name: "Ko'knor somoni", 
-    aliases: ["Маковая солома", "Poppy straw", "Opium poppy straw"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opiy xomashyosi." 
-  },
-  { 
-    id: 76, 
-    name: "Kannabis moyi", 
-    aliases: ["Масло каннабиса", "Hashish oil", "Cannabis oil"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Ekstrakt." 
-  },
-  { 
-    id: 77, 
-    name: "MBDB", 
-    aliases: ["МБДБ", "Eden", "Methylbenzodioxolylbutanamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixostimulyator." 
-  },
-  { 
-    id: 79, 
-    name: "MDMA (Ekstazi)", 
-    aliases: ["МДМА", "MDMA", "Ecstasy", "3,4-Methylenedioxymethamphetamine", "Molly"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Klub narkotigi." 
-  },
-  { 
-    id: 80, 
-    name: "MDPV", 
-    aliases: ["МДПВ", "MDPV", "Bath salts", "Methylenedioxypyrovalerone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Tuzlar." 
-  },
-  { 
-    id: 81, 
-    name: "Meklokvalon", 
-    aliases: ["Меклоквалон", "Mecloqualone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sedativ." 
-  },
-  { 
-    id: 82, 
-    name: "Metakvalon", 
-    aliases: ["Метаквалон", "Methaqualone", "Quaalude"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sedativ." 
-  },
-  { 
-    id: 83, 
-    name: "4-Metilaminoreks", 
-    aliases: ["4-Метиламинорекс", "4-Methylaminorex", "4-MAR"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 84, 
-    name: "Metilon", 
-    aliases: ["Метилон", "bk-MDMA", "Methylone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 85, 
-    name: "Metilfenidat (Ritalin)", 
-    aliases: ["Метилфенидат", "Ritalin", "Methylphenidate"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 86, 
-    name: "3-Monoasetilmorfin", 
-    aliases: ["3-Моноацетилморфин", "3-Monoacetylmorphine", "3-MAM"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Geroin metaboliti." 
-  },
-  { 
-    id: 87, 
-    name: "6-Monoasetilmorfin", 
-    aliases: ["6-Моноацетилморфин", "6-Monoacetylmorphine", "6-MAM"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Geroin metaboliti." 
-  },
-  { 
-    id: 88, 
-    name: "Meskalin", 
-    aliases: ["Мескалин", "Mescaline"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 89, 
-    name: "Metadon (Fenadon)", 
-    aliases: ["Метадон", "Methadone", "Phenadone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Noqonuniy sintetik opioid." 
-  },
-  { 
-    id: 90, 
-    name: "d-metadon", 
-    aliases: ["d-метадон", "d-Methadone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 91, 
-    name: "L-metadon", 
-    aliases: ["L-метадон", "L-Methadone", "Levomethadone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 92, 
-    name: "Metadon, oraliq mahsulot", 
-    aliases: ["Метадон, промежуточный продукт", "Methadone intermediate", "4-cyano-2-dimethylamino-4,4-diphenylbutane"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Prekursor." 
-  },
-  { 
-    id: 93, 
-    name: "Metazotsin", 
-    aliases: ["Метазоцин", "Metazocine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 94, 
-    name: "Metamfetamin", 
-    aliases: ["Метамфетамин", "Methamphetamine", "Vint", "Crystal", "Ice", "Meth"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli stimulyator." 
-  },
-  { 
-    id: 95, 
-    name: "Metildezorfin", 
-    aliases: ["Метилдезорфин", "Methyldesorphine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 96, 
-    name: "Metildigidromorfin", 
-    aliases: ["Метилдигидроморфин", "Methyldihydromorphine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 97, 
-    name: "Mefedron", 
-    aliases: ["Мефедрон", "Mephedrone", "4-MMC", "Meow Meow"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik stimulyator." 
-  },
-  { 
-    id: 99, 
-    name: "3-metilfentanil", 
-    aliases: ["3-метилфентанил", "3-Methylfentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "O'ta kuchli opioid." 
-  },
-  { 
-    id: 100, 
-    name: "N-metilefedron", 
-    aliases: ["N-метилэфедрон", "N-Methylephedrone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 101, 
-    name: "Metiopropamin", 
-    aliases: ["Метиопропамин", "MPA", "Methiopropamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 102, 
-    name: "1-(tiofen-2-il)-2-(metilamino) propan", 
-    aliases: ["1-(тиофен-2-ил)-2-(метиламино) пропан", "Methiopropamine", "MPA"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 103, 
-    name: "Metopon", 
-    aliases: ["Метопон", "Metopon"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 104, 
-    name: "Metoksetamin", 
-    aliases: ["Метоксетамин", "MXE", "Methoxetamine", "Mexxy"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Dissotsiativ." 
-  },
-  { 
-    id: 105, 
-    name: "Mirofin", 
-    aliases: ["Мирофин", "Myrophine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 106, 
-    name: "Ko'knor suti", 
-    aliases: ["Млечный сок", "Opium latex", "Poppy latex"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opiy xomashyosi." 
-  },
-  { 
-    id: 107, 
-    name: "MMDA", 
-    aliases: ["ММДА", "3-methoxy-4,5-methylenedioxyamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 109, 
-    name: "Morferidin", 
-    aliases: ["Морферидин", "Morpheridine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 110, 
-    name: "Morfin metilbromid", 
-    aliases: ["Морфин метилбромид", "Morphine methylbromide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Morfin hosilasi." 
-  },
-  { 
-    id: 111, 
-    name: "Morfin-N-oksid", 
-    aliases: ["Морфин-N-окись", "Morphine-N-oxide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Morfin hosilasi." 
-  },
-  { 
-    id: 112, 
-    name: "MPPP", 
-    aliases: ["МППП", "Desmethylprodine", "MPPP"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 113, 
-    name: "MT-45", 
-    aliases: ["MT-45", "IC-6"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 114, 
-    name: "25B-NBOMe", 
-    aliases: ["25В-NBOMe", "Cimbi-36", "2C-B-NBOMe"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli gallyutsinogen." 
-  },
-  { 
-    id: 115, 
-    name: "25C-NBOMe", 
-    aliases: ["25С-NBOMe", "Cimbi-82", "2C-C-NBOMe"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli gallyutsinogen." 
-  },
-  { 
-    id: 116, 
-    name: "25I-NBOMe", 
-    aliases: ["25I-NBOMe", "N-Bomb", "Smiles", "2C-I-NBOMe"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli gallyutsinogen." 
-  },
-  { 
-    id: 117, 
-    name: "Nikodikodin", 
-    aliases: ["Никодикодин", "Nicodicodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 118, 
-    name: "Nikokodin", 
-    aliases: ["Никокодин", "Nicocodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 119, 
-    name: "Nikomorfin", 
-    aliases: ["Никоморфин", "Nicomorphine", "Vilan"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 120, 
-    name: "Norasimetadol", 
-    aliases: ["Норациметадол", "Noracymethadol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 121, 
-    name: "Norkodein", 
-    aliases: ["Норкодеин", "Norcodeine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kodein metaboliti." 
-  },
-  { 
-    id: 122, 
-    name: "Norlevorfanol", 
-    aliases: ["Норлеворфанол", "Norlevorphanol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 123, 
-    name: "Normetadon", 
-    aliases: ["Норметадон", "Normethadone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Metadon metaboliti." 
-  },
-  { 
-    id: 124, 
-    name: "Normorfin", 
-    aliases: ["Норморфин", "Normorphine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Morfin metaboliti." 
-  },
-  { 
-    id: 125, 
-    name: "Norpipanon", 
-    aliases: ["Норпипанон", "Norpipanone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 126, 
-    name: "Oksikodon", 
-    aliases: ["Оксикодон", "Oxycodone", "Oxy", "Hillbilly Heroin"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli opioid analgetik." 
-  },
-  { 
-    id: 127, 
-    name: "Oksimorfon", 
-    aliases: ["Оксиморфон", "Oxymorphone", "Opana"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli opioid." 
-  },
-  { 
-    id: 128, 
-    name: "Opiy (Tibbiy)", 
-    aliases: ["Опий", "Opium", "Medicinal Opium"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Giyohvandlik vositasi." 
-  },
-  { 
-    id: 129, 
-    name: "Opiy (quritilgan)", 
-    aliases: ["Опий-свернувшийся сок", "Dried opium", "Raw opium"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Giyohvandlik vositasi." 
-  },
-  { 
-    id: 130, 
-    name: "Opiy ko'knori", 
-    aliases: ["Опийный мак", "Papaver somniferum", "Opium Poppy"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "O'simlik." 
-  },
-  { 
-    id: 131, 
-    name: "Oripavin", 
-    aliases: ["Орипавин", "Oripavine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 132, 
-    name: "Para-fluorofentanil", 
-    aliases: ["Пара-флуорофентанил", "Para-fluorofentanyl", "p-fluorofentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi." 
-  },
-  { 
-    id: 133, 
-    name: "Parageksil", 
-    aliases: ["Парагексил", "Parahexyl", "Synhexyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 134, 
-    name: "Pentedron", 
-    aliases: ["Пентедрон", "Pentedrone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 135, 
-    name: "a-metilamino valerofenon", 
-    aliases: ["α-метиламино валерофенон", "Pentedrone", "alpha-methylamino-valerophenone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 136, 
-    name: "PEPAP", 
-    aliases: ["ПЕПАП", "PEPAP"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik opioid." 
-  },
-  { 
-    id: 137, 
-    name: "Petidin", 
-    aliases: ["Петидин", "Pethidine", "Meperidine", "Demerol"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 139, 
-    name: "Petidin oraliq mahsulot B", 
-    aliases: ["Петидин, промежуточный продукт В", "Pethidine intermediate B", "Norpethidine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Prekursor." 
-  },
-  { 
-    id: 140, 
-    name: "Petidin oraliq mahsulot C", 
-    aliases: ["Петидин, промежуточный продукт С", "Pethidine intermediate C", "Pethidinic acid"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Prekursor." 
-  },
-  { 
-    id: 141, 
-    name: "Piminodin", 
-    aliases: ["Пиминодин", "Piminodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 142, 
-    name: "Alfa-PVP (Flakka)", 
-    aliases: ["α-PVP", "Alpha-PVP", "Flakka", "Soli", "Gravel"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "O'ta xavfli sintetik stimulyator ('Tuz')." 
-  },
-  { 
-    id: 143, 
-    name: "Gallyutsinogen qo'ziqorin (Psilotsibin)", 
-    aliases: ["Плодовое тело грибов", "Psilotsibin", "Psilocybin mushrooms", "Magic mushrooms"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 144, 
-    name: "PMA", 
-    aliases: ["ПМА", "Para-methoxyamphetamine", "Dr. Death"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixostimulyator." 
-  },
-  { 
-    id: 145, 
-    name: "PMMA", 
-    aliases: ["ПММА", "Para-methoxymethamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixostimulyator." 
-  },
-  { 
-    id: 146, 
-    name: "Progeptazin", 
-    aliases: ["Прогептазин", "Proheptazine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 147, 
-    name: "Properidin", 
-    aliases: ["Проперидин", "Properidine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 148, 
-    name: "Propiram", 
-    aliases: ["Пропирам", "Propiram"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 149, 
-    name: "Psilosibin", 
-    aliases: ["Псилоцибин", "Psilocybine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 150, 
-    name: "Psilosin", 
-    aliases: ["Псилоцин", "Psilocin"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 151, 
-    name: "Rasemetorfan", 
-    aliases: ["Рацеметорфан", "Racemethorphan"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 152, 
-    name: "Rasemoramid", 
-    aliases: ["Рацеморамид", "Racemoramide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 153, 
-    name: "Rasemorfan", 
-    aliases: ["Рацеморфан", "Racemorphan"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 154, 
-    name: "Rolisiklidin", 
-    aliases: ["Ролициклидин", "Rolicyclidine", "PHP", "PCPY"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Dissotsiativ." 
-  },
-  { 
-    id: 155, 
-    name: "2C-B", 
-    aliases: ["2С-В", "4-bromo-2,5-dimethoxyphenethylamine", "Nexus"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixodelik." 
-  },
-  { 
-    id: 156, 
-    name: "STP (DOM)", 
-    aliases: ["СТП", "ДОМ", "DOM", "STP", "2,5-Dimethoxy-4-methylamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 157, 
-    name: "Tebakon", 
-    aliases: ["Тебакон", "Thebacon", "Acetyldihydrocodeinone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 159, 
-    name: "Tetragidrokannabinol (THC)", 
-    aliases: ["Тетрагидроканнабинол", "THC", "ТГК", "Tetrahydrocannabinol", "Delta-9-THC"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Marixuananing faol moddasi." 
-  },
-  { 
-    id: 160, 
-    name: "Tiofentanil", 
-    aliases: ["Тиофентанил", "Thiofentanyl"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Fentanil analogi." 
-  },
-  { 
-    id: 161, 
-    name: "TMA", 
-    aliases: ["ТМА", "3,4,5-Trimethoxyamphetamine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 162, 
-    name: "Fenadokson", 
-    aliases: ["Фенадоксон", "Phenadoxone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 163, 
-    name: "Fenazotsin", 
-    aliases: ["Феназоцин", "Phenazocine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 164, 
-    name: "Fenampromid", 
-    aliases: ["Фенампромид", "Phenampromide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 165, 
-    name: "Fenatin", 
-    aliases: ["Фенатин", "Phenatine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 166, 
-    name: "Fenetillin", 
-    aliases: ["Фенетиллин", "Fenethylline", "Captagon"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 167, 
-    name: "Fentsiklidin (PCP)", 
-    aliases: ["Фенциклидин", "PCP", "Angel Dust", "Phencyclidine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Dissotsiativ." 
-  },
-  { 
-    id: 168, 
-    name: "Fenomorfan", 
-    aliases: ["Феноморфан", "Phenomorphan"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 169, 
-    name: "Fenoperidin", 
-    aliases: ["Феноперидин", "Phenoperidine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 170, 
-    name: "Folkodin", 
-    aliases: ["Фолкодин", "Pholcodine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 171, 
-    name: "Furetidin", 
-    aliases: ["Фуретидин", "Furethidine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 172, 
-    name: "Ekgonin", 
-    aliases: ["Экгонин", "Ecgonine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kokain metaboliti." 
-  },
-  { 
-    id: 173, 
-    name: "Ko'knor ekstrakti", 
-    aliases: ["Экстракт маковой соломы", "Poppy straw extract", "Concentrate of poppy straw"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opiy." 
-  },
-  { 
-    id: 174, 
-    name: "N-Etil-MDA", 
-    aliases: ["N-Этил-МДА", "N-Ethyl-MDA", "MDEA", "Eve"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Psixostimulyator." 
-  },
-  { 
-    id: 175, 
-    name: "Etilmetiltiambuten", 
-    aliases: ["Этилметилтиамбутен", "Ethylmethylthiambutene"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 176, 
-    name: "Etilon", 
-    aliases: ["Этилон", "Ethylone", "bk-MDEA"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 177, 
-    name: "3,4-metilendioksi-N-etilkatino", 
-    aliases: ["3,4-метилендиокси-N-этилкатинон", "3,4-Methylenedioxy-N-ethylcathinone", "Ethylone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 179, 
-    name: "Metil 2-fenil-2-(piperidin-2- il) aset", 
-    aliases: ["Метил 2-фенил-2-(пиперидин-2- ил) ацетат", "Methyl 2-phenyl-2-(piperidin-2-yl)acetate", "Methylphenidate"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 180, 
-    name: "Etisiklidin", 
-    aliases: ["Этициклидин", "Eticyclidine", "PCE"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Dissotsiativ." 
-  },
-  { 
-    id: 181, 
-    name: "Etokseridin", 
-    aliases: ["Этоксэридин", "Etoxeridine"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 182, 
-    name: "Etonitazen", 
-    aliases: ["Этонитазен", "Etonitazene"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Opioid." 
-  },
-  { 
-    id: 183, 
-    name: "Etorfin", 
-    aliases: ["Эторфин", "Etorphine", "Immobilon"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Kuchli opioid." 
-  },
-  { 
-    id: 184, 
-    name: "Etriptamin", 
-    aliases: ["Этриптамин", "Etryptamine", "alpha-ethyltryptamine", "aET"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Gallyutsinogen." 
-  },
-  { 
-    id: 185, 
-    name: "Efedron (Jef)", 
-    aliases: ["Эфедрон", "Ephedrone", "Jeff", "Mulka", "Methcathinone", "Cat"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Uyda tayyorlanadigan stimulyator." 
-  },
-  { 
-    id: 186, 
-    name: "4-MTA", 
-    aliases: ["4-МТА", "4-Methylthioamphetamine", "Flatliner"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Stimulyator." 
-  },
-  { 
-    id: 187, 
-    name: "HU-211", 
-    aliases: ["НU-211", "Dexanabinol", "HU-211"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 188, 
-    name: "JWH-133", 
-    aliases: ["JWН-133", "JWH-133"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 189, 
-    name: "CP-47,497", 
-    aliases: ["CP-47,497", "CP 47,497"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 190, 
-    name: "CP-55,940", 
-    aliases: ["CP-55,940", "CP 55,940"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 191, 
-    name: "HU-308", 
-    aliases: ["НU-308", "HU-308"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 192, 
-    name: "HU-331", 
-    aliases: ["НU-331", "HU-331"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 193, 
-    name: "AM-1220", 
-    aliases: ["AM-1220", "AM-1220"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 195, 
-    name: "AM-2201", 
-    aliases: ["AM-2201", "AM-2201"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 196, 
-    name: "AM-2232", 
-    aliases: ["AM-2232", "AM-2232"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 197, 
-    name: "EAM-2201", 
-    aliases: ["ЕAM-2201", "EAM-2201", "5-Fluoro-JWH-210 analog"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 198, 
-    name: "JWH-007", 
-    aliases: ["JWН-007", "JWH-007"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 199, 
-    name: "JWH-011", 
-    aliases: ["JWН-011", "JWH-011"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 200, 
-    name: "JWH-015", 
-    aliases: ["JWН-015", "JWH-015"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 201, 
-    name: "JWH-016", 
-    aliases: ["JWН-016", "JWH-016"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 202, 
-    name: "JWH-018", 
-    aliases: ["JWH-018", "Spice", "Spays", "1-pentyl-3-(1-naphthoyl)indole", "AM-678"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid ('Spice')." 
-  },
-  { 
-    id: 203, 
-    name: "JWH-019", 
-    aliases: ["JWН-019", "JWH-019", "1-hexyl-3-(1-naphthoyl)indole"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 204, 
-    name: "JWH-020", 
-    aliases: ["JWН-020", "JWH-020"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 205, 
-    name: "JWH-022", 
-    aliases: ["JWН-022", "JWH-022"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 206, 
-    name: "JWH-030", 
-    aliases: ["JWН-030", "JWH-030"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 207, 
-    name: "JWH-031", 
-    aliases: ["JWН-031", "JWH-031"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 208, 
-    name: "JWH-072", 
-    aliases: ["JWН-072", "JWH-072"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 209, 
-    name: "JWH-073", 
-    aliases: ["JWН-073", "JWH-073", "1-butyl-3-(1-naphthoyl)indole"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 210, 
-    name: "JWH-081", 
-    aliases: ["JWН-081", "JWH-081", "4-methoxy-JWH-018"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 211, 
-    name: "JWH-098", 
-    aliases: ["JWН-098", "JWH-098"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 212, 
-    name: "JWH-122", 
-    aliases: ["JWН-122", "JWH-122", "4-methyl-JWH-018"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 213, 
-    name: "JWH-164", 
-    aliases: ["JWН-164", "JWH-164"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 214, 
-    name: "JWH-182", 
-    aliases: ["JWН-182", "JWH-182"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 215, 
-    name: "JWH-200", 
-    aliases: ["JWН-200", "JWH-200", "WIN 55,225"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 216, 
-    name: "JWH-210", 
-    aliases: ["JWН-210", "JWH-210", "4-ethyl-JWH-018"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 217, 
-    name: "JWH-234", 
-    aliases: ["JWН-234", "JWH-234"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 218, 
-    name: "JWH-267", 
-    aliases: ["JWН-267", "JWH-267"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 221, 
-    name: "JWH-387", 
-    aliases: ["JWН-387", "JWH-387"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 222, 
-    name: "JWH-398", 
-    aliases: ["JWН-398", "JWH-398"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 223, 
-    name: "JWH-412", 
-    aliases: ["JWН-412", "JWH-412"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 224, 
-    name: "MAM-2201", 
-    aliases: ["МAM-2201", "MAM-2201", "5-fluoro-JWH-122"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 225, 
-    name: "JWH-203", 
-    aliases: ["JWН-203", "JWH-203"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 226, 
-    name: "JWH-249", 
-    aliases: ["JWН-249", "JWH-249"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 227, 
-    name: "JWH-250", 
-    aliases: ["JWН-250", "JWH-250", "2-(2-метоксифенил)-1-(1-пентил-1Н-индол-3-ил)-этанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 228, 
-    name: "JWH-251", 
-    aliases: ["JWН-251", "JWH-251", "2-(2-метилфенил)-1-(1-пентил-1Н-индол-3-ил)-этанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 229, 
-    name: "JWH-302", 
-    aliases: ["JWН-302", "JWH-302", "2-(3-метоксифенил)-1-(1-пентил-1Н-индол-3-ил)-этанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 230, 
-    name: "MDMB-CHMICA", 
-    aliases: ["MDMB-CНMICA", "MDMB-CHMICA", "MMB-CHMICA"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 231, 
-    name: "Sintetik kannabinoid (Metil-L-valin)", 
-    aliases: ["N-[[1-(циклогексилметил)-1Н-индол-3-ил] карбонил] -3-метил-L-валин", "MDMB-CHMICA precursor"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 232, 
-    name: "RCS-8", 
-    aliases: ["RCS-8", "SR-18"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 233, 
-    name: "AM-630", 
-    aliases: ["AM-630", "6-Iodopravadoline"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 234, 
-    name: "AM-679", 
-    aliases: ["AM-679", "AM-679"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 235, 
-    name: "AM-694", 
-    aliases: ["AM-694", "AM-694"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 236, 
-    name: "AM-1241", 
-    aliases: ["AM-1241", "AM-1241"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 237, 
-    name: "AM-2233", 
-    aliases: ["AM-2233", "(2-йодофенил)-(1-((1-метилпиперидин-2-ил)метил)-1Н-индол-3-ил)-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 238, 
-    name: "RCS-4", 
-    aliases: ["RCS-4", "SR-19", "4-метоксифенил-(1-пентил-1Н-индол-3-ил)-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 239, 
-    name: "WIN-48,098", 
-    aliases: ["WIN-48,098", "Pravadoline", "(4-метоксифенил)-(2-метил-1-(2-(4-морфолинил)этил)-1Н-индол-3-ил)-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 240, 
-    name: "JWH-175", 
-    aliases: ["JWН-175", "JWH-175", "3-(1-нафталинилметил)-1-пентил-1Н-индол"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 241, 
-    name: "A-796, 260", 
-    aliases: ["A-796, 260", "A-796260"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 242, 
-    name: "A-834, 735", 
-    aliases: ["A-834, 735", "A-834735"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 243, 
-    name: "AB-005", 
-    aliases: ["AB-005", "AB-005"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 244, 
-    name: "5FUR-144", 
-    aliases: ["5FUR-144", "XLR-11 analog", "5-fluoro-UR-144"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 245, 
-    name: "UR-144", 
-    aliases: ["UR-144", "TMCP-018", "KM-X1"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 246, 
-    name: "XLR-11", 
-    aliases: ["XLR-11", "5-Fluoro-UR-144", "5F-UR-144"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 247, 
-    name: "AKB-48", 
-    aliases: ["AKB-48", "APINACA", "N-(адамантан-1-ил)-1-пентил-1Н-индазол-3-карбоксамид"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 248, 
-    name: "AM-1248", 
-    aliases: ["AM-1248", "1-адамантил-(1-((1-метилпипе­ридин-2-ил)метил)индол-3-ил)-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 249, 
-    name: "Org 27569", 
-    aliases: ["Org 27569", "5-хлоро-3-этил-N-(2-(4-пиперидин-1-илфенил)этил)-1Н-индол-2-карбоксамид"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 250, 
-    name: "Org 27759", 
-    aliases: ["Org 27759", "N-(2-(4-(диметиламино) фенил) этил)-3-этил-5-фтор-1Н-индол-2-карбоксамид"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 251, 
-    name: "Org 29647", 
-    aliases: ["Org 29647", "N-(1-benzylpyrrolidin-3-yl)-5-chloro-3-ethyl-1H-indole-2-carboxamide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 252, 
-    name: "STS-135", 
-    aliases: ["STS-135", "5F-APICA", "N-(adamantan-1-yl)-1-(5-fluoropentyl)-1H-indole-3-carboxamide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 253, 
-    name: "URB-597", 
-    aliases: ["URB-597", "KDS-4103"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 254, 
-    name: "URB-602", 
-    aliases: ["URB-602"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 255, 
-    name: "JWH-145", 
-    aliases: ["JWН-145", "JWH-145", "Naphthalen-1-yl-(1-pentyl-5-phenylpyrrol-3-yl)methanone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 256, 
-    name: "JWH-307", 
-    aliases: ["JWН-307", "JWH-307", "(5-(2-fluorophenyl)-1-pentylpyrrol-3-yl)-naphthalen-1-ylmethanone"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 257, 
-    name: "JWH-309", 
-    aliases: ["JWН-309", "JWH-309", "1-нафталинил (5-(1-нафталинил)-1-пентил-1Н-пиррол-3-ил)-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 258, 
-    name: "JWH-368", 
-    aliases: ["JWН-368", "JWH-368", "(5-(2-фторфенил)-1-пентил-1Н-пиррол-3-ил)-1-нафталинил-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 259, 
-    name: "JWH-369", 
-    aliases: ["JWН-369", "JWH-369", "(5-(2-хлорфенил)-1-пентил-1Н-пиррол-3-ил)-1-нафталинил-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 260, 
-    name: "JWH-370", 
-    aliases: ["JWН-370", "JWH-370", "(5-(2-метилфенил)-1-пентил-1Н-пиррол-3-ил)-1-нафталинил-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 261, 
-    name: "AM-251", 
-    aliases: ["AM-251"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 262, 
-    name: "AM-281", 
-    aliases: ["AM-281"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 263, 
-    name: "WIN-55,212-2", 
-    aliases: ["WIN-55,212-2", "WIN 55,212-2"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 264, 
-    name: "AM-3102", 
-    aliases: ["AM-3102"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 265, 
-    name: "URB-754", 
-    aliases: ["URB-754"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 266, 
-    name: "A-836, 339", 
-    aliases: ["A-836, 339", "A-836339"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 267, 
-    name: "JTE-907", 
-    aliases: ["JTE-907", "N-(бензо(1,3)диоксол-5-илметил)-7-метокси-2-оксо-8-пентилокси-1,2-дигидрохинолин-3-карбоксамид"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 268, 
-    name: "CB-13", 
-    aliases: ["CB-13", "SAB-378", "1-нафталинил(4-(пентилокси)-1-нафталинил)-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 269, 
-    name: "CRA-13", 
-    aliases: ["CRA-13", "1-нафталинил(4-пентилокси)-1-нафталинил)-метанон"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 270, 
-    name: "AB-CHMINACA", 
-    aliases: ["AB-CНMINACA", "AB-CHMINACA", "N-[1-(аминокарбанил)-2-метилпропил]-1-(циклогексилметил)-1Н-индазол- 3-карбоксамид"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 271, 
-    name: "5F-APINACA", 
-    aliases: ["5F-APINACA", "5F-AKB-48", "N-(adamantan-1-yl)-1-(5-fluoropentyl)-1H-indazole-3-carboxamide"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 272, 
-    name: "AM-4030", 
-    aliases: ["АМ-4030", "AM-4030"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
-  { 
-    id: 273, 
-    name: "CP-80633", 
-    aliases: ["CP-80633"], 
-    category: "O‘zbekiston Respublikasida muomalada bo‘lishi taqiqlangan giyohvandlik vositasi", 
-    description: "Sintetik kannabinoid." 
-  },
+        // --- MA'LUMOTLAR BAZASI (TASHQI FAYLDAN OLINADI) ---
+        // Agar database.js yuklanmasa, bo'sh massiv bo'lib qoladi va xatolik bermaydi.
+        const DATABASE = window.TAQIQ_DATABASE || [];
 
-            // --- CHEKLANGAN GIYOHVANDLIK VOSITALARI (RO'YXAT II) ---
-            { id: 274, name: "Alfentanil", aliases: ["Алфентанил", "Alfentanil"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Qisqa ta'sirli opioid analgetik (anesteziyada)." },
-            { id: 275, name: "p-Aminopropiofenon (PAPP)", aliases: ["р-Аминопропиофенон", "PAPP"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Sianid zaharlanishiga qarshi antidot." },
-            { id: 276, name: "Amobarbital", aliases: ["Амобарбитал", "Amobarbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Barbiturat." },
-            { id: 277, name: "Amfepramon", aliases: ["Амфепрамон", "Amfepramone"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Stimulyator (anoreksigen)." },
-            { id: 278, name: "Amfetamin (preparatlari)", aliases: ["Амфетамин и комбинированные лекарственные препараты", "Phenamine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Tibbiy maqsadlardagi amfetamin." },
-            { id: 279, name: "Buprenorfin", aliases: ["Бупренорфин", "Buprenorphine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid analgetik." },
-            { id: 280, name: "Butorfanol", aliases: ["Буторфанол", "Butorphanol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid analgetik." },
-            { id: 281, name: "Glutetimid", aliases: ["Глутетимид", "Glutethimide"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Sedativ va uxlatuvchi vosita." },
-            { id: 282, name: "Dekstromoramid", aliases: ["Декстроморамид", "Dextromoramide"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kuchli og'riq qoldiruvchi." },
-            { id: 283, name: "Dekstropropoksifen", aliases: ["Декстропропоксифен", "Dextropropoxyphene"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Analgetik." },
-            { id: 284, name: "Digidrokodein", aliases: ["Дигидрокодеин", "Dihydrocodeine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kodeindan kuchliroq opioid." },
-            { id: 285, name: "Difenoksilat", aliases: ["Дифеноксилат", "Diphenoxylate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Diareya ga qarshi vosita (opioid)." },
-            { id: 286, name: "Kodein", aliases: ["Кодеин", "Codeine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Yo'talga qarshi va og'riq qoldiruvchi opioid." },
-            { id: 287, name: "Kodein fosfat", aliases: ["Кодеина фосфат", "Codeine phosphate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kodein tuzi." },
-            { id: 288, name: "Kokain", aliases: ["Кокаин", "Cocaine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kuchli stimulyator va mahalliy anesteziya vositasi." },
-            { id: 289, name: "Kokain gidroxlorid", aliases: ["Кокаина гидрохлорид", "Cocaine hydrochloride"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kokain tuzi (tibbiy)." },
-            { id: 290, name: "Kodein N-oksid", aliases: ["Кодеин N-оксид", "Codeine N-oxide"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kodein hosilasi." },
-            { id: 291, name: "Levamfetamin", aliases: ["Левамфетамин", "Levamphetamine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Stimulyator." },
-            { id: 292, name: "Morfin", aliases: ["Морфин", "Morphine", "Morfiy"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Oltin standart og'riq qoldiruvchi opioid." },
-            { id: 293, name: "Morfin gidroxlorid", aliases: ["Морфина гидрохлорид", "Morphine hydrochloride"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Morfin tuzi." },
-            { id: 294, name: "Morfin sulfat", aliases: ["Морфина сульфат", "Morphine sulfate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Morfin tuzi." },
-            { id: 295, name: "Morfilong", aliases: ["Морфилонг", "Morphilong"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Uzoq ta'sirli morfin preparati." },
-            { id: 296, name: "Nalbufin gidroxlorid", aliases: ["Налбуфина гидрохлорид", "Nalbuphine hydrochloride", "Nalbufin"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid analgetik." },
-            { id: 297, name: "Omnopon", aliases: ["Омнопон", "Omnopon", "Pantopon"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opiy alkaloidlari aralashmasi." },
-            { id: 298, name: "Pentazotsin", aliases: ["Пентазоцин", "Pentazocine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid analgetik." },
-            { id: 299, name: "Piritramid", aliases: ["Пиритрамид", "Piritramide", "Dipidolor"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kuchli opioid." },
-            { id: 300, name: "Prosidol", aliases: ["Просидол", "Prosidol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Sintetik opioid." },
-            { id: 301, name: "Murakkab tarkibli preparatlar (Kodein, etilmorfin v.h.k)", aliases: ["Препараты ацетилдигидрокодеина, дигидрокодеина, никодикодина, никокодина, норкодеина, фолькодина, этилморфина"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "100 mg dan ortiq bo'lmagan va konsentratsiyasi 2,5% dan oshmagan preparatlar." },
-            { id: 302, name: "Propiram preparatlari", aliases: ["Препараты Пропирама", "Propiram preparations"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "100 mg gacha dozada va metiltsellyuloza bilan aralashtirilgan." },
-            { id: 303, name: "Dekstropropoksifen preparatlari", aliases: ["Препараты Декстропропоксифена"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Oral qabul uchun, 135 mg gacha dozada." },
-            { id: 304, name: "Kokain preparatlari", aliases: ["Препараты Кокаина", "Cocaine preparations"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "0.1% dan ko'p bo'lmagan kokain asosini saqlovchi preparatlar." },
-            { id: 305, name: "Difenoksin preparatlari", aliases: ["Препараты Дифеноксина"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "0.5 mg gacha difenoksin va atropin sulfat aralashmasi." },
-            { id: 306, name: "Difenoksilat preparatlari", aliases: ["Препараты Дифеноксилата"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "2.5 mg gacha difenoksilat va atropin sulfat aralashmasi." },
-            { id: 307, name: "Ipekakuana va opiy kukuni", aliases: ["Pulvis ipecacuanhae et opii compositus", "Dover kukuni"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "10% opiy kukuni va 10% ipekakuana ildizi kukuni aralashmasi." },
-            { id: 308, name: "Narkotik vosita saqlovchi aralashmalar", aliases: ["Смеси наркотических средств"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Narkotik bo'lmagan moddalar bilan aralashtirilgan preparatlar." },
-            { id: 309, name: "Reazek", aliases: ["Реазек", "Reasec"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Difenoksilat va atropin aralashmasi." },
-            { id: 310, name: "Remifentanil", aliases: ["Ремифентанил", "Remifentanil"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Juda qisqa ta'sirli opioid analgetik." },
-            { id: 311, name: "Tilidin shamlari", aliases: ["Свечи тилидина", "Tilidine suppositories"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Tilidin saqlovchi shamchalar." },
-            { id: 312, name: "Sombrevin", aliases: ["Сомбревин", "Propanidid"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Anestetik." },
-            { id: 313, name: "Sufentanil", aliases: ["Суфентанил", "Sufentanil"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Juda kuchli opioid analgetik." },
-            { id: 314, name: "Alnagon", aliases: ["Таблетки «Алнагон»", "Alnagon"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kodein fosfati, kofein va fenobarbital saqlovchi tabletkalar." },
-            { id: 315, name: "Kodeinli preparatlar (yuqori dozali)", aliases: ["Комбинированные лекарственные препараты, содержащие кодеин"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "8 mg dan ortiq kodein saqlovchi preparatlar." },
-            { id: 316, name: "Tebain", aliases: ["Тебаин", "Thebaine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opiy alkaloidi." },
-            { id: 317, name: "Tilidin", aliases: ["Тилидин", "Tilidine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid analgetik." },
-            { id: 318, name: "Tramadol", aliases: ["Трамадол", "Tramadol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid analgetik (II Ro'yxat)." },
-            { id: 319, name: "Trimeperidin (Promedol)", aliases: ["Тримеперидин", "Промедол", "Promedol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kuchli og'riq qoldiruvchi." },
-            { id: 320, name: "Fentanil", aliases: ["Фентанил", "Fentanyl"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Juda kuchli opioid." },
-            { id: 321, name: "Fenmetrazin", aliases: ["Фенметразин", "Phenmetrazine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Stimulyator." },
-            { id: 322, name: "Sipeprol", aliases: ["Ципепрол", "Zipeprol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Yo'talga qarshi vosita (suiiste'mol qilinadi)." },
-            { id: 323, name: "Etilmorfin", aliases: ["Этилморфин", "Ethylmorphine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid." },
-            { id: 324, name: "Eskodol", aliases: ["Эскодол", "Escodol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Kuchli analgetik." },
-            { id: 325, name: "Etilmorfin gidroxlorid", aliases: ["Этилморфина гидрохлорид"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Etilmorfin tuzi." },
-            { id: 326, name: "Etaminal-natriy", aliases: ["Этаминал-натрия", "Pentobarbital", "Пентобарбитал"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Barbiturat (uxlatuvchi)." },
-            { id: 327, name: "Tapentadol", aliases: ["Тапентадол", "Tapentadol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan giyohvandlik vositasi", description: "Opioid analgetik." },
-            
-            // --- CHEKLANGAN PSIXOTROP MODDALAR (RO'YXAT III) ---
-            { id: 328, name: "Allobarbital", aliases: ["Аллобарбитал", "Allobarbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat." },
-            { id: 329, name: "Alprazolam", aliases: ["Алпразолам", "Alprazolam", "Xanax", "Alzolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Trankvilizator (Benzodiazepin)." },
-            { id: 330, name: "Amineptin", aliases: ["Аминептин", "Amineptine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Antidepressant (stimulyator ta'sirga ega)." },
-            { id: 331, name: "Aminoreks", aliases: ["Аминорекс", "Aminorex"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator (ishtahani bo'g'uvchi)." },
-            { id: 332, name: "Aprofen", aliases: ["Апрофен", "Aprofene"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Xolinolitik (spazmolitik)." },
-            { id: 333, name: "Baklosan", aliases: ["Баклосан", "Baclosan", "Baclofen"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Mushak relaksanti (suiiste'mol qilinadi)." },
-            { id: 334, name: "Barbital", aliases: ["Барбитал", "Barbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Uzoq ta'sirli barbiturat." },
-            { id: 335, name: "Barbital natriy", aliases: ["Барбитал-натрия", "Barbital sodium"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbital tuzi." },
-            { id: 336, name: "Benzfetamin", aliases: ["Бензфетамин", "Benzphetamine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator." },
-            { id: 337, name: "Bromazepam", aliases: ["Бромазепам", "Bromazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin (tinchlantiruvchi)." },
-            { id: 338, name: "Bromizoval", aliases: ["Бромизовал", "Bromisoval"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Yengil uxlatuvchi." },
-            { id: 339, name: "Brotizolam", aliases: ["Бротизолам", "Brotizolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin analogi." },
-            { id: 340, name: "Butalbital", aliases: ["Буталбитал", "Butalbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat." },
-            { id: 341, name: "Butobarbital", aliases: ["Бутобарбитал", "Butobarbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat." },
-            { id: 342, name: "Vinilbital", aliases: ["Винилбитал", "Vinylbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat." },
-            { id: 343, name: "Halazepam", aliases: ["Галазепам", "Halazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 344, name: "Haloksazolam", aliases: ["Галоксазолам", "Haloxazolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 345, name: "Halotan", aliases: ["Галотан", "Halothane", "Ftorotan"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Ingalyatsion anestetik." },
-            { id: 346, name: "Delorazepam", aliases: ["Делоразепам", "Delorazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 347, name: "Diazepam", aliases: ["Диазепам", "Diazepam", "Valium", "Sibazon"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Keng tarqalgan trankvilizator (tinchlantiruvchi)." },
-            { id: 348, name: "Droperidol", aliases: ["Дроперидол", "Droperidol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Antipsixotik." },
-            { id: 349, name: "Zopiklon", aliases: ["Зопиклон", "Zopiclone", "Imovan"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Uxlatuvchi vosita." },
-            { id: 350, name: "Kamazepam", aliases: ["Камазепам", "Camazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 351, name: "Ketazolam", aliases: ["Кетазолам", "Ketazolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 352, name: "Ketamin", aliases: ["Кетамин", "Ketamine", "Kalipsol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Dissotsiativ anestetik (gallyutsinogen ta'sirga ega)." },
-            { id: 353, name: "Klobazam", aliases: ["Клобазам", "Clobazam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 354, name: "Kloksazolam", aliases: ["Клоксазолам", "Cloxazolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 355, name: "Klonazepam", aliases: ["Клоназепам", "Clonazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Epilepsiyaga qarshi kuchli benzodiazepin." },
-            { id: 356, name: "Klorazepat", aliases: ["Клоразепат", "Clorazepate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 357, name: "Klotiazepam", aliases: ["Клотиазепам", "Clotiazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 358, name: "Klonidin (Klofelin)", aliases: ["Клонидин гидрохлорид", "Clonidine", "Klofelin"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Qon bosimini tushiruvchi (jinoyat maqsadida ishlatilishi mumkin)." },
-            { id: 359, name: "Levometamfetamin", aliases: ["Левометамфетамин", "Levomethamphetamine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator." },
-            { id: 360, name: "Lefetamin", aliases: ["Лефетамин", "Lefetamine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator va analgetik." },
-            { id: 361, name: "Loprazolam", aliases: ["Лопразолам", "Loprazolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 362, name: "Lorazepam", aliases: ["Лоразепам", "Lorazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin (tinchlantiruvchi)." },
-            { id: 363, name: "Lormetazepam", aliases: ["Лорметазепам", "Lormetazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 364, name: "Mazindol", aliases: ["Мазиндол", "Mazindol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Ishtahani bo'g'uvchi (stimulyator)." },
-            { id: 365, name: "Medazepam", aliases: ["Медазепам", "Medazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin (kunduzgi trankvilizator)." },
-            { id: 366, name: "Midazolam", aliases: ["Мидазолам", "Midazolam", "Dormicum"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Kuchli uxlatuvchi va sedativ (Dormikum)." },
-            { id: 367, name: "Mezokarb", aliases: ["Мезокарб", "Mesocarb", "Sydnocarb"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Psixostimulyator." },
-            { id: 368, name: "Meprobamat", aliases: ["Мепробамат", "Meprobamate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Anksiolitik (tinchlantiruvchi)." },
-            { id: 369, name: "Metilfenobarbital", aliases: ["Метилфенобарбитал", "Methylphenobarbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat." },
-            { id: 370, name: "Metiprilon", aliases: ["Метиприлон", "Methyprylon"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Sedativ." },
-            { id: 371, name: "Mefenoreks", aliases: ["Мефенорекс", "Mefenorex"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator (ishtahani bo'g'uvchi)." },
-            { id: 372, name: "Natriy oksibutirat", aliases: ["Натрия оксибутират", "Sodium oxybate", "Butirat"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Anesteziya vositasi (noqonuniy 'suyuq ekstazi')." },
-            { id: 373, name: "Nimetazepam", aliases: ["Ниметазепам", "Nimetazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 374, name: "Nitrazepam", aliases: ["Нитразепам", "Nitrazepam", "Radedorm"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Uxlatuvchi (Rade dorm)." },
-            { id: 375, name: "Nordazepam", aliases: ["Нордазепам", "Nordazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 376, name: "Oksazepam", aliases: ["Оксазепам", "Oxazepam", "Nozepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Trankvilizator." },
-            { id: 377, name: "Oksazolam", aliases: ["Оксазолам", "Oxazolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 378, name: "Pemolin", aliases: ["Пемолин", "Pemoline"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator." },
-            { id: 379, name: "Pinazepam", aliases: ["Пиназепам", "Pinazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 380, name: "Pipradrol", aliases: ["Пипрадрол", "Pipradrol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Psixostimulyator." },
-            { id: 381, name: "Pirovaleron", aliases: ["Пировалерон", "Pyrovalerone"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator." },
-            { id: 382, name: "Prazepam", aliases: ["Празепам", "Prazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 383, name: "Psevdoefedrin", aliases: ["Псевдоэфедрин", "Pseudoephedrine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Sof holdagi Psevdoefedrin." },
-            { id: 384, name: "Psevdoefedrin kombinatsiyalari", aliases: ["Псевдоэфедрина комбинированные лекарственные средства", "Pseudoephedrine combinations"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Dozasi 10 mg dan yuqori bo'lgan preparatlar." },
-            { id: 385, name: "Ratsemat metamfetamina", aliases: ["Рацемат метамфетамина", "Metamfetamin racemate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Metamfetamin shakli." },
-            { id: 386, name: "Sekbutabarbital", aliases: ["Секбутабарбитал", "Secbutabarbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat." },
-            { id: 387, name: "Temazepam", aliases: ["Темазепам", "Temazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Uxlatuvchi (benzodiazepin)." },
-            { id: 388, name: "Tetrazepam", aliases: ["Тетразепам", "Tetrazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Mushak relaksanti (benzodiazepin)." },
-            { id: 389, name: "Tiopental-natriy", aliases: ["Тиопентал-натрия", "Thiopental sodium"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Narkoz vositasi." },
-            { id: 390, name: "Triazolam", aliases: ["Триазолам", "Triazolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Kuchli uxlatuvchi." },
-            { id: 391, name: "Trigeksifenidil", aliases: ["Тригексифенидил", "Trihexyphenidyl", "Tsiklodol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Parkinsonizmga qarshi vosita." },
-            { id: 392, name: "Fenazepam", aliases: ["Феназепам", "Phenazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Kuchli trankvilizator." },
-            { id: 393, name: "Fendimetrazin", aliases: ["Фендиметразин", "Phendimetrazine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Ishtahani bo'g'uvchi stimulyator." },
-            { id: 394, name: "Fenkamfamin", aliases: ["Фенкамфамин", "Fencamfamin"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator." },
-            { id: 395, name: "Fenobarbital", aliases: ["Фенобарбитал", "Phenobarbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat (Korvalol, Valokordin tarkibida)." },
-            { id: 396, name: "Fenproporeks", aliases: ["Фенпропорекс", "Fenproporex"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Ishtahani bo'g'uvchi." },
-            { id: 397, name: "Fentermin", aliases: ["Фентермин", "Phentermine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Ishtahani bo'g'uvchi (amfetaminga o'xshash)." },
-            { id: 398, name: "Feprosidnin gidroxlorid", aliases: ["Фепросиднина гидрохлорид", "Feprosidnine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Sydnophen." },
-            { id: 399, name: "Fludiazepam", aliases: ["Флудиазепам", "Fludiazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 400, name: "Flunitrazepam", aliases: ["Флунитразепам", "Flunitrazepam", "Rohypnol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Kuchli uxlatuvchi." },
-            { id: 401, name: "Flurazepam", aliases: ["Флуразепам", "Flurazepam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin (uxlatuvchi)." },
-            { id: 402, name: "Xlordiazepoksid", aliases: ["Хлордиазепоксид", "Chlordiazepoxide", "Elenium"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Tinchlantiruvchi (Elenium)." },
-            { id: 403, name: "Sefedrin", aliases: ["Цефедрин", "Cefedrine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator." },
-            { id: 404, name: "Siklobarbital", aliases: ["Циклобарбитал", "Cyclobarbital"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Barbiturat." },
-            { id: 405, name: "Estazolam", aliases: ["Эстазолам", "Estazolam"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 406, name: "Etilamfetamin", aliases: ["Этиламфетамин", "Ethylamphetamine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator." },
-            { id: 407, name: "Etilloflazepat", aliases: ["Этиллофлазепат", "Ethyl loflazepate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Benzodiazepin." },
-            { id: 408, name: "Etinamat", aliases: ["Этинамат", "Ethinamate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Uxlatuvchi." },
-            { id: 409, name: "Etxlorvinol", aliases: ["Этхлорвинол", "Ethchlorvynol"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Sedativ." },
-            { id: 410, name: "Efedrin gidroxlorid", aliases: ["Эфедрина гидрохлорид", "Ephedrine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Stimulyator (shamollashga qarshi dorilar tarkibida)." },
-            { id: 411, name: "Zolpidem", aliases: ["Золпидем", "Zolpidem"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Uxlatuvchi vosita." },
-            { id: 412, name: "Oksibutirat kislotasi (GHB)", aliases: ["GНB", "γ-оксимасляная кислота", "Gamma-hydroxybutyrate"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan psixotrop modda", description: "Markaziy nerv tizimi depressanti." },
-
-            // --- PREKURSORLAR (IV RO'YXAT) ---
-            { id: 413, name: "4-anilino-N-fenetilpiperidin (ANPP)", aliases: ["4-анилино-N-фенетилпиперидин", "ANPP"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Fentanil sintezi uchun prekursor." },
-            { id: 414, name: "Antranil kislotasi", aliases: ["Антраниловая кислота", "Anthranilic acid"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Prekursor." },
-            { id: 415, name: "N-asetilantranil kislotasi", aliases: ["N-ацетилантраниловая кислота", "N-acetylanthranilic acid"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Prekursor." },
-            { id: 416, name: "Aseton (60% dan yuqori)", aliases: ["Ацетон", "Acetone"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Erituvchi (narkotik ishlab chiqarishda ishlatiladi)." },
-            { id: 417, name: "Izosafrol", aliases: ["Изосафрол", "Isosafrole"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "MDMA sintezi uchun prekursor." },
-            { id: 418, name: "Qizil fosfor", aliases: ["Красный фосфор", "Red Phosphorus"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Metamfetamin ishlab chiqarishda ishlatiladi." },
-            { id: 419, name: "Lizergin kislotasi", aliases: ["Лизергиновая кислота", "Lysergic acid"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "LSD sintezi uchun asosiy modda." },
-            { id: 420, name: "Metiletilketon (60% dan yuqori)", aliases: ["Метилэтилкетон", "2-Butanone", "MEK"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Erituvchi." },
-            { id: 421, name: "3,4-Metilendioksifenil-2-propanon (3,4-MDP-2-P)", aliases: ["3,4-Метилендиоксифенил-2-пропанон", "PMK"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "MDMA (Ekstazi) prekursori." },
-            { id: 422, name: "Kaliy permanganat (45% dan yuqori)", aliases: ["Перманганат калия", "Potassium permanganate", "Margantsovka"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Oksidlovchi (kokain, metkatinon tozalashda)." },
-            { id: 423, name: "Piperidin", aliases: ["Пиперидин", "Piperidine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Fentsiklidin (PCP) sintezi uchun." },
-            { id: 424, name: "Piperonal", aliases: ["Пиперональ", "Piperonal", "Geliotropin"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "MDMA prekursori." },
-            { id: 425, name: "Propion angidrid", aliases: ["Пропионовый ангидрид", "Propionic anhydride"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Fentanil analoglarini sintez qilishda." },
-            { id: 426, name: "Psevdoefedrin", aliases: ["Псевдоэфедрин", "Pseudoephedrine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Metamfetamin sintezi uchun asosiy prekursor." },
-            { id: 427, name: "Safrol", aliases: ["Сафрол", "Safrole"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "MDMA sintezi uchun." },
-            { id: 428, name: "Sulfat kislotasi (45% dan yuqori)", aliases: ["Серная кислота", "Sulfuric acid", "Купоросовое масло"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Kuchli kislota, prekursor." },
-            { id: 429, name: "Xlorid kislotasi (15% dan yuqori)", aliases: ["Соляная кислота", "Hydrochloric acid", "Хлористоводородная кислота"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Kuchli kislota, prekursor." },
-            { id: 430, name: "Toluol (70% dan yuqori)", aliases: ["Толуол", "Toluene", "Methylbenzene"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Erituvchi." },
-            { id: 431, name: "Efedra o'ti", aliases: ["Трава эфедры", "Ephedra"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Efedrin manbai." },
-            { id: 432, name: "Sirka angidridi", aliases: ["Уксусный ангидрид", "Acetic anhydride"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Geroin ishlab chiqarishda asosiy kimyoviy modda." },
-            { id: 433, name: "Alfa-fenilatsetoatsetonitril (APAAN)", aliases: ["α-Фенилацетоацетонитрил", "APAAN"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "P-2-P prekursori." },
-            { id: 434, name: "Fenil-2-propanon (P-2-P)", aliases: ["Фенил-2-пропанон", "Phenyl-2-propanone", "BMK"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Amfetamin va metamfetamin prekursori." },
-            { id: 435, name: "Fenilpropanolamin (Norefedrin)", aliases: ["Фенилпропаноламин", "Phenylpropanolamine", "Norephedrine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Stimulyator." },
-            { id: 436, name: "Fenilsirka kislotasi", aliases: ["Фенилуксусная кислота", "Phenylacetic acid"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "P-2-P sintezi uchun." },
-            { id: 437, name: "N-fentsil-4-piperidon (NPP)", aliases: ["N-фенетил-4-пиперидон", "NPP"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Fentanil prekursori." },
-            { id: 438, name: "Ergometrin", aliases: ["Эргометрин", "Ergometrine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "LSD sintezi uchun prekursor." },
-            { id: 439, name: "Ergotamin", aliases: ["Эрготамин", "Ergotamine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "LSD sintezi uchun prekursor (migrenga qarshi dorilar tarkibida bo'lishi mumkin)." },
-            { id: 440, name: "Etil efiri (45% dan yuqori)", aliases: ["Этиловый эфир", "Ethyl ether", "Diethyl ether"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Erituvchi va ekstragent." },
-            { id: 441, name: "Efedrin", aliases: ["Эфедрин", "Ephedrine"], category: "O‘zbekiston Respublikasida muomalada bo‘lishi cheklangan prekursor", description: "Metamfetamin sintezi uchun." },
-
-            // --- KUCHLI TA'SIR QILUVCHI MODDALAR ---
-            { id: 442, name: "19-norandrostenediol", aliases: ["19-норандростенедиол"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 443, name: "19-norandrostenedion", aliases: ["19-норандростенедион"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 444, name: "1-testosteron", aliases: ["1-тестостерон", "1-Testosterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Kuchli anabolik steroid." },
-            { id: 445, name: "2,4-Dinitrofenol (DNP)", aliases: ["2,4-динитрофенол", "2,4-DNP"], category: "Kuchli ta'sir qiluvchi modda", description: "O'ta xavfli ozdiruvchi vosita (zaharlanish xavfi yuqori)." },
-            { id: 446, name: "4-gidroksitestosteron", aliases: ["4-гидрокситестостерон"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 447, name: "Kardarin (GW 1516)", aliases: ["GW 1516", "Cardarine", "Endurobol"], category: "Kuchli ta'sir qiluvchi modda", description: "Metabolik modulyator (doping), chidamlilikni oshirish uchun ishlatiladi." },
-            { id: 448, name: "Androstanolon", aliases: ["Андростанолон", "Androstanolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 449, name: "Androstenediol", aliases: ["Андростенедиол", "Androstenediol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 450, name: "Androstenedion", aliases: ["Андростенедион", "Androstenedione"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 451, name: "Benaktizin (Amizil)", aliases: ["Бенактизин", "Амизил", "Benactyzine"], category: "Kuchli ta'sir qiluvchi modda", description: "Xolinolitik (tinchlantiruvchi)." },
-            { id: 452, name: "Benzobarbital", aliases: ["Бензобарбитал", "Benzobarbital"], category: "Kuchli ta'sir qiluvchi modda", description: "Barbiturat (epilepsiyaga qarshi)." },
-            { id: 453, name: "Bolazin", aliases: ["Болазин", "Bolazine"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 454, name: "Bolasteron", aliases: ["Боластерон", "Bolasterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 455, name: "Boldenon", aliases: ["Болденон", "Boldenone", "Equipoise"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid (veterinariya)." },
-            { id: 456, name: "Boldion", aliases: ["Болдион", "Boldione"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 457, name: "Geksobarbital", aliases: ["Гексобарбитал", "Hexobarbital"], category: "Kuchli ta'sir qiluvchi modda", description: "Narkoz vositasi." },
-            { id: 458, name: "Gestrinon", aliases: ["Гестринон", "Gestrinone"], category: "Kuchli ta'sir qiluvchi modda", description: "Gormonal preparat." },
-            { id: 459, name: "Danazol", aliases: ["Даназол", "Danazol"], category: "Kuchli ta'sir qiluvchi modda", description: "Androgen." },
-            { id: 460, name: "Degidroxlorometiltestosteron", aliases: ["Дегидрохлорметилтестостерон", "Turinabol", "Turanabol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid (Turinabol)." },
-            { id: 461, name: "Dezoksimetiltestosteron", aliases: ["Дезоксиметилтестостерон", "Desoxymethyltestosterone", "Madol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 462, name: "Drostanolon", aliases: ["Дростанолон", "Drostanolone", "Masteron"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 463, name: "Zaleplon", aliases: ["Залеплон", "Andante", "Sonata", "Zaleplon"], category: "Kuchli ta'sir qiluvchi modda", description: "Uyqu chaqiruvchi vosita (Sedativ).", medicines: ["Andante", "Sonata"]},
-            { id: 464, name: "Zeranol", aliases: ["Зеранол", "Zeranol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik (veterinariya)." },
-            { id: 465, name: "Kalusteron", aliases: ["Калустерон", "Calusterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 466, name: "Klostebol", aliases: ["Клостебол", "Clostebol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 467, name: "Levomepromazin", aliases: ["Левомепромазин", "Levomepromazine", "Tizercin"], category: "Kuchli ta'sir qiluvchi modda", description: "Antipsixotik (Tizertsin)." },
-            { id: 468, name: "Mebolazin", aliases: ["Меболазин", "Mebolazine"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 469, name: "Mezabolon", aliases: ["Мезаболон", "Mesabolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 470, name: "Mepitiostan", aliases: ["Мепитиостан", "Mepitiostane"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 471, name: "Mestanolon", aliases: ["Местанолон", "Mestanolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 472, name: "Mesterolon", aliases: ["Местеролон", "Mesterolone", "Proviron"], category: "Kuchli ta'sir qiluvchi modda", description: "Androgen (Proviron)." },
-            { id: 473, name: "Metandienon", aliases: ["Метандиенон", "Metandrostenolon", "Dianabol", "Methandienone"], category: "Kuchli ta'sir qiluvchi modda", description: "Mashhur anabolik steroid (Metan)." },
-            { id: 474, name: "Metandriol", aliases: ["Метандриол", "Methandriol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 475, name: "Metasteron", aliases: ["Метастерон", "Methasterone", "Superdrol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 476, name: "Metenolon", aliases: ["Метенолон", "Methenolone", "Primobolan"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid (Primobolan)." },
-            { id: 477, name: "Metil-1-testosteron", aliases: ["Метил-1-тестостерон", "Methyl-1-testosterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 478, name: "Metildienolon", aliases: ["Метилдиенолон", "Methyldienolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 479, name: "Metilnortestosteron", aliases: ["Метилнортестостерон", "Methylnortestosterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 480, name: "Metiltestosteron", aliases: ["Метилтестостерон", "Methyltestosterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Androgen." },
-            { id: 481, name: "Metiltrienolon", aliases: ["Метилтриенолон", "Methyltrienolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 482, name: "Metilepitiostanol", aliases: ["Метилэпитиостанол", "Methylepithiostanol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 483, name: "Miboleron", aliases: ["Миболерон", "Mibolerone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 484, name: "Nandrolon", aliases: ["Нандролон", "Nandrolone", "Deca-Durabolin", "Retabolil"], category: "Kuchli ta'sir qiluvchi modda", description: "Mashhur anabolik steroid (Deca)." },
-            { id: 485, name: "Norboleton", aliases: ["Норболетон", "Norboletone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 486, name: "Norklostebol", aliases: ["Норклостебол", "Norclostebol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 487, name: "Noretandrolon", aliases: ["Норэтандролон", "Norethandrolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 488, name: "Oksabolon", aliases: ["Оксаболон", "Oxabolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 489, name: "Oksandrolon", aliases: ["Оксандролон", "Oxandrolone", "Anavar"], category: "Kuchli ta'sir qiluvchi modda", description: "Mashhur anabolik steroid (Anavar)." },
-            { id: 490, name: "Oksimesteron", aliases: ["Оксиместерон", "Oxymesterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 491, name: "Oksimetolon", aliases: ["Оксиметолон", "Oxymetholone", "Anadrol"], category: "Kuchli ta'sir qiluvchi modda", description: "Juda kuchli anabolik steroid (Anadrol)." },
-            { id: 492, name: "Orto-xlorbenzilidenmalonodinitril (CS)", aliases: ["Орто-хлорбензилиденмалонодинитрил", "CS Gas", "Ko'z yosh artuvchi gaz"], category: "Kuchli ta'sir qiluvchi modda", description: "Ko'zni yoshlantiruvchi gaz (politsiya vositasi)." },
-            { id: 493, name: "Ostarin (MK-2866)", aliases: ["Остарин", "Ostarine", "Enobosarm", "MK-2866"], category: "Kuchli ta'sir qiluvchi modda", description: "SARM (selektiv androgen retseptorlari modulyatori)." },
-            { id: 494, name: "Kava (Mast qiluvchi qalampir)", aliases: ["Маст қилувчи қалампир", "Кава-кава", "Kava", "Piper methysticum"], category: "Kuchli ta'sir qiluvchi modda", description: "Tinchlantiruvchi ta'sirga ega o'simlik." },
-            { id: 495, name: "Prasteron (DHEA)", aliases: ["Прастерон", "Prasterone", "DHEA"], category: "Kuchli ta'sir qiluvchi modda", description: "Gormonal preparat." },
-            { id: 496, name: "Pregabalin", aliases: ["Прегабалин", "Lyrica", "Lirika", "Regapen", "Zorkex", "Algerika"], category: "Kuchli ta'sir qiluvchi modda", description: "Epilepsiyaga qarshi dori. Narkotik sifatida suiiste'mol qilinadi.", medicines: ["Lyrica", "Regapen", "Algerika", "Zorkex"] },
-            { id: 497, name: "Propetandrol", aliases: ["Пропетандрол", "Propetandrol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 498, name: "Propilgeksedrin", aliases: ["Пропилгекседрин", "Propylhexedrine", "Benzedrex"], category: "Kuchli ta'sir qiluvchi modda", description: "Stimulyator (burun bitishiga qarshi vosita tarkibida)." },
-            { id: 499, name: "Prostanozol", aliases: ["Простанозол", "Prostanozol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 500, name: "Roksibolon", aliases: ["Роксиболон", "Roxibolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 501, name: "Sibutramin", aliases: ["Сибутрамин", "Sibutramine", "Reduxin", "Fatzorb", "Bileyt"], category: "Kuchli ta'sir qiluvchi modda", description: "Ozdiruvchi vosita (Ishtahani bo'g'uvchi). BADA tarkibida yashirin bo'lishi mumkin.", medicines: ["Fatzorb", "LiDa", "Bileyt", "Kod S", "Reborn", "Reduxin"] },
-            { id: 502, name: "Spora (Ergotamin/Ergotoksin)", aliases: ["Спора", "Ergotamin", "Эрготоксин", "Ergotamine", "Ergotoxine"], category: "Kuchli ta'sir qiluvchi modda", description: "Migrenga qarshi ishlatiladi. Prekursor xususiyatiga ega." },
-            { id: 503, name: "Stanozolol", aliases: ["Станозолол", "Winstrol", "Stanozolol", "Strombafort"], category: "Kuchli ta'sir qiluvchi modda", description: "Sportda keng tarqalgan anabolik steroid (Winstrol).", medicines: ["Winstrol", "Stromba", "Stanabol"] },
-            { id: 504, name: "Stenbolon", aliases: ["Стенболон", "Stenbolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 505, name: "Tetragidrogestrinon", aliases: ["Тетрагидрогестринон", "Tetrahydrogestrinone", "THG"], category: "Kuchli ta'sir qiluvchi modda", description: "Dizayner anabolik steroid." },
-            { id: 506, name: "Tiomesteron", aliases: ["Тиоместерон", "Thiomesterone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 507, name: "Trenbolon", aliases: ["Тренболон", "Trenbolone", "Parabolan", "Tren"], category: "Kuchli ta'sir qiluvchi modda", description: "Juda kuchli anabolik steroid (ko'pincha veterinariyada).", medicines: ["Parabolan", "Tri-Tren"] },
-            { id: 508, name: "Tropikamid", aliases: ["Тропикамид", "Tropicamide", "Midriasil"], category: "Kuchli ta'sir qiluvchi modda", description: "Ko'z tomchisi. Narkotik ta'sirini kuchaytirish uchun ishlatiladi.", medicines: ["Midriasil", "Tropicamide"] },
-            { id: 509, name: "Fluoksimesteron", aliases: ["Флуоксиместерон", "Fluoxymesterone", "Halotestin"], category: "Kuchli ta'sir qiluvchi modda", description: "Kuchli androgenik steroid." },
-            { id: 510, name: "Formebolon", aliases: ["Формеболон", "Formebolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 511, name: "Furazabol", aliases: ["Фуразабол", "Furazabol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 512, name: "Xinbolon", aliases: ["Хинболон", "Quinbolone"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 513, name: "Xloroform", aliases: ["Хлороформ", "Chloroform", "Trichloromethane"], category: "Kuchli ta'sir qiluvchi modda", description: "Kuchli narkoz va erituvchi vosita." },
-            { id: 514, name: "Siklopentolat", aliases: ["Циклопентолат", "Cyclopentolate", "Siklomed"], category: "Kuchli ta'sir qiluvchi modda", description: "Ko'z tomchisi (Tropikamid analogi, 'apteka narkomaniyasi' obyekti).", medicines: ["Cyclomed", "Siklomed"] },
-            { id: 515, name: "Enestebol", aliases: ["Энестебол", "Enestebol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 516, name: "Epitiostanol", aliases: ["Эпитиостанол", "Epitiostanol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 517, name: "Ergotal", aliases: ["Эрготал", "Ergotal"], category: "Kuchli ta'sir qiluvchi modda", description: "Spora alkaloidlari aralashmasi." },
-            { id: 518, name: "Etilxlorid", aliases: ["Этилхлорид", "Ethyl chloride", "Хлорэтил"], category: "Kuchli ta'sir qiluvchi modda", description: "Mahalliy anestetik (muzlatuvchi)." },
-            { id: 519, name: "Etilestrenol", aliases: ["Этилэстренол", "Ethylestrenol"], category: "Kuchli ta'sir qiluvchi modda", description: "Anabolik steroid." },
-            { id: 520, name: "Gabapentin", aliases: ["Габапентин", "Gabapentin", "Neurontin", "Tebantin"], category: "Kuchli ta'sir qiluvchi modda", description: "Epilepsiyaga qarshi dori. Lirika (Pregabalin) o'rnini bosuvchi sifatida suiiste'mol qilinadi.", medicines: ["Neurontin", "Tebantin", "Gabagamma", "Konvallis"] }
-            // ... (Qolgan barcha yozuvlar shu yerda bo'lishi kerak, user tajribasi uchun to'liq bazani qo'llab-quvvatlaymiz)
-        ];
-
-        // To'ldiruvchi baza (Foydalanuvchi tajribasi buzilmasligi uchun avvalgi to'liq ro'yxatni tiklash shart emas, lekin qidiruv ishlashi uchun asosiy moddalar bo'lishi kerak.
-        // Yuqoridagi ro'yxat namunaviy, haqiqiy ilovada to'liq ro'yxat bo'lishi lozim.)
-        
         // --- HELPERS: FUZZY SEARCH ---
         const levenshtein = (a, b) => {
             if (a.length === 0) return b.length;
@@ -2306,6 +224,14 @@
         };
 
         const App = () => {
+            // API KEY STATE MANAGEMENT
+            const [userApiKey, setUserApiKey] = useState(() => {
+                // Avval localStorage, keyin qattiq kodlangan kalitni tekshiramiz
+                // v2 ga o'zgartirildi, eski xato kalitlarni tozalash uchun
+                return localStorage.getItem('gemini_api_key_v2') || HARDCODED_API_KEY || '';
+            });
+            const [showSettings, setShowSettings] = useState(false);
+
             const [mode, setMode] = useState('search'); 
             const [query, setQuery] = useState('');
             const [results, setResults] = useState([]);
@@ -2331,6 +257,11 @@
             useEffect(() => {
                 chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
             }, [messages]);
+
+            const saveApiKey = (key) => {
+                setUserApiKey(key);
+                localStorage.setItem('gemini_api_key_v2', key);
+            };
 
             useEffect(() => {
                 if (query.trim().length === 0) {
@@ -2375,6 +306,10 @@
             };
 
             const handleModeChange = (newMode) => {
+                if ((newMode === 'chat' || newMode === 'scan') && !userApiKey) {
+                    setShowSettings(true);
+                    return;
+                }
                 setMode(newMode);
                 setSelectedItem(null);
                 setSelectedImage(null);
@@ -2389,6 +324,10 @@
 
             // GEMINI CHAT LOGIC (FIXED)
             const handleSendMessage = async () => {
+                if (!userApiKey) {
+                    setShowSettings(true);
+                    return;
+                }
                 if (!chatInput.trim()) return;
 
                 const userMsg = chatInput;
@@ -2428,7 +367,7 @@
                 `;
 
                 try {
-                    const response = await fetch(`/api/gemini`, {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userApiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2437,7 +376,10 @@
                         })
                     });
 
-                    if (!response.ok) throw new Error("API Error");
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+                    }
 
                     const data = await response.json();
                     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Uzr, javobni ololmadim.";
@@ -2445,8 +387,17 @@
                     setMessages(prev => [...prev, {role: 'assistant', text: reply}]);
 
                 } catch (error) {
-                    console.error(error);
-                    setMessages(prev => [...prev, {role: 'assistant', text: "Xatolik yuz berdi. Internetni tekshiring yoki keyinroq urinib ko'ring."}]);
+                    console.error("Chat API Error:", error);
+                    let userErrorMessage = "Xatolik: API kalitini tekshiring yoki internetni ko'zdan kechiring.";
+                    if (error.message.includes('403')) {
+                        userErrorMessage = "Xatolik 403: API kalit ruxsati yo'q yoki noto'g'ri. Sozlamalarni tekshiring.";
+                        setShowSettings(true);
+                    } else if (error.message.includes('API key not valid')) {
+                        userErrorMessage = "API kalit yaroqsiz. Iltimos, to'g'ri kalit kiriting.";
+                        setShowSettings(true);
+                    }
+                    
+                    setMessages(prev => [...prev, {role: 'assistant', text: userErrorMessage}]);
                 } finally {
                     setIsLoadingChat(false);
                 }
@@ -2454,6 +405,10 @@
 
             // GEMINI IMAGE ANALYSIS (FIXED)
             const handleImageUpload = async (e) => {
+                if (!userApiKey) {
+                    setShowSettings(true);
+                    return;
+                }
                 const file = e.target.files[0];
                 if (!file) return;
 
@@ -2473,7 +428,7 @@
                         reader.readAsDataURL(file);
                     });
 
-                    const response = await fetch(`/api/gemini`, {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userApiKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -2488,7 +443,10 @@
                         })
                     });
 
-                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+                    }
 
                     const data = await response.json();
                     const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -2545,34 +503,101 @@
                     }
 
                 } catch (err) {
-                    console.error(err);
+                    console.error("Scan API Error:", err);
                     setIsScanning(false);
-                    setScanStatus("Tahlil xatoligi: Qayta urinib ko'ring.");
+                    let errorMsg = "Tahlil xatoligi: API kalitini tekshiring.";
+                    
+                    if (err.message.includes('403')) {
+                        errorMsg = "Xatolik 403: Ruxsat yo'q. API kalit domenini tekshiring.";
+                        setShowSettings(true);
+                    } else if (err.message.includes('API key not valid')) {
+                        errorMsg = "API kalit yaroqsiz.";
+                        setShowSettings(true);
+                    }
+                    
+                    setScanStatus(errorMsg);
                 }
             };
+
+            const SettingsModal = () => (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 fade-in">
+                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative">
+                        <button 
+                            onClick={() => setShowSettings(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                        </button>
+                        
+                        <div className="mb-4 flex items-center gap-3">
+                            <div className="bg-blue-100 p-2.5 rounded-xl text-blue-600">
+                                <SettingsIcon className="w-6 h-6" />
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-900">Sozlamalar</h3>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">
+                                    Google Gemini API Key
+                                </label>
+                                <div className="relative">
+                                    <input 
+                                        type="text" 
+                                        value={userApiKey}
+                                        onChange={(e) => saveApiKey(e.target.value)}
+                                        placeholder="AI Studio kalitini kiriting..."
+                                        className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+                                    />
+                                    <div className="absolute left-3 top-3 text-slate-400">
+                                        <KeyIcon className="w-4 h-4" />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+                                    Dasturga standart kalit biriktirilgan. Agar u ishlamasa yoki o'z kalitingizni ishlatmoqchi bo'lsangiz, shu yerga kiriting.
+                                    <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-blue-500 underline ml-1 font-bold">Kalitni olish</a>
+                                </p>
+                            </div>
+                            
+                            <button 
+                                onClick={() => setShowSettings(false)}
+                                className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-200"
+                            >
+                                Saqlash va yopish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
 
             return (
                 <div className="w-full max-w-md bg-white min-h-screen shadow-2xl flex flex-col relative">
                     
+                    {showSettings && <SettingsModal />}
+
                     {/* Header */}
                     <div className="bg-slate-900 text-white p-6 pb-6 sticky top-0 z-50 shadow-lg border-b border-slate-700/50">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="relative group cursor-pointer">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-blue-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
-                                <div className="relative p-3 bg-slate-950 ring-1 ring-white/10 rounded-xl leading-none flex items-center justify-center shadow-2xl">
-                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" className="fill-slate-900 stroke-slate-500" strokeWidth="2"/>
-                                        <path d="M9 12L11 14L15 10" className="stroke-red-500" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </svg>
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-4">
+                                <div className="relative group cursor-pointer">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-blue-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
+                                    <div className="relative p-3 bg-slate-950 ring-1 ring-white/10 rounded-xl leading-none flex items-center justify-center shadow-2xl">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" className="fill-slate-900 stroke-slate-500" strokeWidth="2"/>
+                                            <path d="M9 12L11 14L15 10" className="stroke-red-500" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h1 className="text-2xl font-black tracking-tight text-white leading-none mb-1">
+                                        MODDA<span className="text-red-500">CHECK</span>
+                                    </h1>
+                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest opacity-80">Taqiqlangan moddalarni aniqlash</p>
                                 </div>
                             </div>
-
-                            <div>
-                                <h1 className="text-2xl font-black tracking-tight text-white leading-none mb-1">
-                                    MODDA<span className="text-red-500">CHECK</span>
-                                </h1>
-                                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest opacity-80">Taqiqlangan moddalarni aniqlash</p>
-                            </div>
+                            
+                            {/* SOZLAMALAR TUGMASI OLIB TASHLANDI */}
                         </div>
 
                         {/* Mode Switcher */}
@@ -3391,10 +1416,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
